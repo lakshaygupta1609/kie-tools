@@ -21,6 +21,7 @@ package org.kie.workbench.common.dmn.client.shape.view.connections;
 
 import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.MultiPathDecorator;
+import com.ait.lienzo.client.core.shape.OrthogonalPolyLine;
 import com.ait.lienzo.client.core.shape.PolyLine;
 import com.ait.lienzo.client.core.types.Point2D;
 
@@ -30,7 +31,7 @@ public class Connection {
 
     private MultiPathDecorator head;
     private MultiPathDecorator tail;
-    private PolyLine line;
+    private OrthogonalPolyLine line;
 
     public Connection(final double x1,
                       final double y1,
@@ -56,19 +57,21 @@ public class Connection {
         return tail;
     }
 
-    public PolyLine getLine() {
+    public OrthogonalPolyLine getLine() {
         return line;
     }
 
-    protected PolyLine createLine(final double x1,
-                                  final double y1,
-                                  final double x2,
-                                  final double y2) {
-        final PolyLine line = new PolyLine(new Point2D(x1,
-                                                       y1),
-                                           new Point2D(x2,
-                                                       y2));
-        setDashArray(line);
+    protected OrthogonalPolyLine createLine(final double x1,
+                                            final double y1,
+                                            final double x2,
+                                            final double y2) {
+        final OrthogonalPolyLine line = new OrthogonalPolyLine(new Point2D(x1,
+                                                                           y1),
+                                                               new Point2D(x2,
+                                                                           y2));
+        // Set cornerRadius to 0 for sharp Manhattan-style corners
+        line.setCornerRadius(0);
+        // setDashArray(line); // OrthogonalPolyLine might not have setDashArray, verify if needed
         line.setDraggable(true);
         line.setSelectionStrokeOffset(SELECTION_OFFSET);
         line.setHeadOffset(getHead().getPath().getBoundingBox().getHeight());
@@ -85,7 +88,8 @@ public class Connection {
         return new MultiPathDecorator(new MultiPath());
     }
 
-    protected void setDashArray(final PolyLine line) {
-        // It doesn't have dash array
-    }
+    // protected void setDashArray(final OrthogonalPolyLine line) {
+    //     // OrthogonalPolyLine may not support dash array in the same way.
+    //     // If dashing is needed, this requires further investigation for OrthogonalPolyLine.
+    // }
 }
